@@ -31,8 +31,8 @@ new_dataframe = pd.DataFrame()
 for seg in range(len(trajectorySegments)):
     # only use segments longer than 10
     if trajectorySegments[seg].shape[0] > 10:
-        print(trajectorySegments[seg].iloc[0])
-        print(trajectorySegments[seg].shape)
+        # print(trajectorySegments[seg].iloc[0])
+        # print(trajectorySegments[seg].shape)
         tr_obj = tr.Trajectory(mood='df', trajectory=trajectorySegments[seg], labels=['transportation_mode'])
 
         tr_obj.point_features()  # generate point_features
