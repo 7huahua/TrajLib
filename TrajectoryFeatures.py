@@ -27,10 +27,13 @@ class TrajectoryFeatures:
     def __init__(self, **kwargs):
 
         self.row_data = kwargs.get('trajectory', pd.DataFrame())
+        self.row_data.sort_index(ascending=True, inplace=True)
+
+        # print(self.row_data.shape)
         self.labels = kwargs.get('labels', ['target'])
         self.smooth_ = kwargs.get('smooth', False)
         self.sgn_ = kwargs.get('sgn', False)
-        print(self.row_data.index)
+
         self.get_duration()  # 1
 
         self.get_distance(smooth=False)  # 2
@@ -78,7 +81,9 @@ class TrajectoryFeatures:
         t = t.astype(np.float64)
         t = np.append(t[0:], t[-1:])
         tmp = self.row_data.assign(td=t)
+        # print(tmp)
         tmp1 = tmp.loc[tmp['td'] > 0, :]
+        # print(tmp1)
         # avoid NaN in case rate of sampling is more than 1 per second
         self.row_data = tmp1
         self.row_data.assign(timestamp=self.row_data.index)
@@ -134,8 +139,16 @@ class TrajectoryFeatures:
     """calculate acc"""
 
     def get_acc(self, smooth=False, sgn=False):
+        # print("------------------------")
+        # print(self.row_data)
+        # print(self.row_data.speed)
         _speed_diff = np.diff(self.row_data.speed)
+        # print("-------------------------------")
+        # print(_speed_diff)
         _speed_diff = np.append(_speed_diff, _speed_diff[-1:])
+        # print("---------------------------------")
+        # print(self.row_data.td)
+        # print(_speed_diff)
         acc_val = _speed_diff / self.row_data.td
         if sgn:
             acc_val = np.sign(acc_val)

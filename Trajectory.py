@@ -132,6 +132,7 @@ class Trajectory:
         self.labels = labels
         # input data needs lat,lon,alt,timeDate, [Labels]
         self.raw_data = pd.read_csv(src, sep=separator, parse_dates=[time_date], index_col=time_date)
+        self.raw_data.sort_index(ascending=True, inplace=True)
         self.raw_data.rename(columns={lat: 'lat'}, inplace=True)
         self.raw_data.rename(columns={lon: 'lon'}, inplace=True)
         if alt is not None:

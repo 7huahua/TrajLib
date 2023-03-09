@@ -9,20 +9,26 @@ class TrajectoryDescriptor:
         self.isInValid = False
         self.isPure = False
         self.row_data = kwargs.get('trajectory', pd.DataFrame())
+        self.row_data.sort_index(ascending=True, inplace=True)
+
         self.labels = kwargs.get('labels', ['target'])
         self.stop_parameters = kwargs.get('stop_parameters', [100, 60, 60, 100])
         if self.row_data.shape[0] == 0:
             self.isInValid = True
         self.purity_labels = self.purity()
+        # print(self.labels)
+        # print(self.purity_labels)
         self.target_label = self.get_target()
 
     def get_target(self):
         if len(self.purity_labels) == 1:
             return list(self.purity_labels.keys())[0]
         else:
-            print(self.row_data)
+            # print(self.row_data)
+            print(self.purity_labels)
+            # sorted_dic = sorted(self.purity_labels.items(), key=lambda x: x[1], reverse=True)
             sorted_dic = sorted(self.purity_labels, key=self.purity_labels.get, reverse=True)
-            return list(sorted_dic.keys())[0]  #TODO descobrir erro
+            return sorted_dic[0][0]  #TODO descobrir erro
 
     def purity(self):
         label_dic = {}
