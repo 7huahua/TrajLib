@@ -11,9 +11,12 @@ from sklearn import preprocessing
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+# already dropped duplicate
 ts_obj = ts.TrajectorySegmentation()
-ts_obj.load_data(lat='latitude', lon='longitude', time_date='collected_time',
-                 labels=['transportation_mode'], src='databases/geolife/geolife.csv', seperator=',')
+ts_obj.load_data(lat='lat', lon='lon', time_date='datetime',
+                 labels=['transportation_mode'], src='databases/target_user_trajs.csv', seperator=',')
 print(ts_obj.return_row_data().shape)
 print("Targets: ", set(ts_obj.return_row_data().transportation_mode))
 
@@ -27,7 +30,11 @@ features = []
 new_dataframe = pd.DataFrame()
 for seg in range(len(trajectorySegments)):
     # only use segments longer than 10
+    if seg != 13:
+        continue
     if trajectorySegments[seg].shape[0] > 10:
+        print(trajectorySegments[seg].iloc[0])
+        print(trajectorySegments[seg].shape)
         tr_obj = tr.Trajectory(mood='df', trajectory=trajectorySegments[seg], labels=['transportation_mode'])
 
         tr_obj.point_features()  # generate point_features

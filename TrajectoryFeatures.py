@@ -30,7 +30,7 @@ class TrajectoryFeatures:
         self.labels = kwargs.get('labels', ['target'])
         self.smooth_ = kwargs.get('smooth', False)
         self.sgn_ = kwargs.get('sgn', False)
-
+        print(self.row_data.index)
         self.get_duration()  # 1
 
         self.get_distance(smooth=False)  # 2

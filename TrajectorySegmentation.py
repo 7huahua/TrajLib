@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from CBSmot import CBSmot
+from datetime import datetime
 
 # pd.options.mode.chained_assignment = 'raise'
 # pd.options.mode.chained_assignment = None
@@ -49,7 +50,8 @@ class TrajectorySegmentation:
         # input data needs lat,lon,alt,time_date, [Labels]
         # ,nrows=80000
         #self.raw_data = self.raw_data.drop_duplicates(time_date)
-        self.row_data = pd.read_csv(src, sep=seperator, parse_dates=[time_date],index_col=time_date)
+        colleced_data_parser = lambda x: datetime.strptime(x, "%Y-%m-%d %H:%M:%S")
+        self.row_data = pd.read_csv(src, sep=seperator, parse_dates=[time_date],date_parser=colleced_data_parser,index_col=time_date)
         #self.raw_data = self.raw_data.drop_duplicates(['t_user_id',time_date])
         #self.raw_data.set_index(time_date)
 
@@ -60,10 +62,12 @@ class TrajectorySegmentation:
             self.hasAlt = True
         self.row_data.rename(columns={(time_date): ('time_date')}, inplace=True)
         #self.raw_data = self.raw_data.drop_duplicates(['t_user_id','time_date'])
-        #self.raw_data = self.raw_data.set_index('time_date')
+        # self.raw_data = self.raw_data.set_index('time_date')
 
         # sort data first
-        #self.raw_data=self.raw_data.sort_index()
+        self.row_data=self.row_data.sort_index()
+        print(self.row_data.head())
+        print(self.row_data.head().index)
         self.row_data['day'] = self.row_data.index.date
 
         # preprocessing
@@ -247,3 +251,10 @@ class TrajectorySegmentation:
     def __del__(self):
         del self.row_data
         print('clear memory')
+
+
+if __name__ == '__main__':
+    ts_obj= TrajectorySegmentation()
+    ts_obj.load_data(lat='latitude',lon='longitude',time_date='collected_time',
+                    labels=['transportation_mode'],src='databases/geolife/geolife.csv',seperator=',')
+    print(ts_obj.return_row_data().shape)
